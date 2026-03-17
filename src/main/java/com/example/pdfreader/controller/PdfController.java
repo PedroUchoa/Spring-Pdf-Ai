@@ -1,6 +1,7 @@
 package com.example.pdfreader.controller;
 
 import com.example.pdfreader.dto.ContentResponseDto;
+import com.example.pdfreader.service.AssistantAiService;
 import com.example.pdfreader.service.PdfExtractorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

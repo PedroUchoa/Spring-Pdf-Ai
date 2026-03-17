@@ -13,6 +13,13 @@ import java.io.IOException;
 @Service
 public class PdfExtractorService {
 
+    private final AssistantAiService aiService;
+
+    public PdfExtractorService(AssistantAiService aiService) {
+        this.aiService = aiService;
+    }
+
+
     public String extractContent(MultipartFile file){
         if (file == null || file.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The File Is Empty");
@@ -22,7 +29,7 @@ public class PdfExtractorService {
 
         try (PDDocument document = Loader.loadPDF(file.getBytes())) {
             PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
+            return aiService.handleRequest(stripper.getText(document)).content();
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error Processing Your PDF, Please Try Again");
         }
