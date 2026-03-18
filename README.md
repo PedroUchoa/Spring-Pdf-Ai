@@ -48,7 +48,7 @@ Este projeto tem como objetivo processar documentos PDF enviados por usuários, 
 #### Get all items
 
 ```http
-  GET /api/pdf/extract
+  POST /api/pdf/extract
 ```
 
 | Parameter | Type     | Description                |
