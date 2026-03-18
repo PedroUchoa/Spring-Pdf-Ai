@@ -1,5 +1,8 @@
 package com.example.pdfreader.service;
 
+import com.example.pdfreader.exceptions.FileEmptyException;
+import com.example.pdfreader.exceptions.FormatInvalidException;
+import com.example.pdfreader.exceptions.InternalErrorProcessingPdfException;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Service
@@ -20,18 +24,16 @@ public class PdfExtractorService {
     }
 
 
-    public String extractContent(MultipartFile file){
-        if (file == null || file.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The File Is Empty");
-
-        if (!"application/pdf".equals(file.getContentType()))
-            throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Format Invalid, Please Just Upload PDFs");
+    public String extractContent(MultipartFile file) {
+        System.out.println("teste");
+        if (file == null || file.isEmpty()) throw new FileEmptyException();
+        if (!"application/pdf".equals(file.getContentType())) throw new FormatInvalidException();
 
         try (PDDocument document = Loader.loadPDF(file.getBytes())) {
             PDFTextStripper stripper = new PDFTextStripper();
             return aiService.handleRequest(stripper.getText(document)).content();
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error Processing Your PDF, Please Try Again");
+            throw new InternalErrorProcessingPdfException();
         }
     }
 
